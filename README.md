@@ -1,2 +1,4 @@
 # ECE4220
-Embedded Systems
+Real-Time Embedded Systems
+
+Embedded systems lab, taken fall of 2020.
