@@ -66,3 +66,27 @@ all:
 clean:
 	make -C  /lib/modules/$(shell uname -r)/build M=$(PWD) clean
             Go back to the build dir and then remove/clean all of the modules
+
+Lab Hints:
+Step 1: Configure IO pin
+- 6,7,8 FSEL2 turn On
+    .000 = GPIO Pin Input Mode
+    .001 = GPIO Pin Output Mode
+Step 2: Configure GPSET command to turn on LED
+Step 3: Configure GPCCLR command to turn off the LED
+Step 4: After done with kernel module
+    // GPFSEL0 -> Sel 3 bits
+    // GPFSET0 -> Set the LED on
+Step 5: Cleanup
+    // gpsel0
+    // gpcl0
+
+Last Example - 
+unsigned long * gpsel0 = (unsigned long *)ioremap(0x3f200000 4096)
+                                                    ^physical address and not virtual
+            
+Pins???
+
+There will be 32 bits
+8 7 6   5 4 3   2 1 0
+--3--   --2--   --1-- Pin inputs - OX40 -> ob00100000 means pin 2 is an output
