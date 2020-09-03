@@ -1,2 +1,68 @@
 Lab Notes 09/03/20:
 
+
+
+To login without help of script:
+ssh -X pi@128.206.19.XX
+     ^ Indicates graphic interface will be used
+To access the via the file explorer (without mount):
+Connect to Server -> ssh://128.206.19.XX -> U: pi P: roomc1251
+
+
+
+How to write a Kernel Module:
+
+BASIC C++/C# -
+    int main(){
+
+    }
+
+    Compilation Steps: Lab1.c -(compile)> Lab1.o -(link)> Lab1.exe
+        Library file types... For functions located elsewhere.
+        .a - static (looks for these while linking)
+        .so -dynamic
+
+    To run:
+        ./Lab1.exe
+
+KERNEL Module
+    init_module(){
+        /**
+        printk("Hello World");
+        **/
+    }
+    cleanup_module(){
+        prink("Goodbye");
+    }
+
+    STACK -> User_Space_Module (where we've been until previously) -> O.S. -> Hardware
+        - Need to be careful when writing a module (infinite while loop results in need to
+            reboot the entire system)
+
+    Compilation Steps: No linker. Only need to use compilers in OS. No need for third party comps.
+        - This means we cannot use most external function, we are restricted to kernel module functions.
+
+    To run:
+        sudo insmod Lab1.KO (kernel object file)
+
+    To remove:
+        sudo rmmod Lab1.KO (Tab = autocomplete)
+
+    To access log file:
+        dmesg
+
+    Differences:
+        - No linking
+        - No external .o system functions
+        - Instead of main we have two different function blocks, init_module and cleaup_module
+
+Makefile Notes:
+obj-m+=Lab1_P1.o
+ccflags-y := -std=gnu99 -Wno-declaration-after-statement
+
+all:
+	make -C  /lib/modules/$(shell uname -r)/build M=$(PWD) modules
+            Change dir to build, then uses the current directory to build modules and brings them back to the root
+clean:
+	make -C  /lib/modules/$(shell uname -r)/build M=$(PWD) clean
+            Go back to the build dir and then remove/clean all of the modules
