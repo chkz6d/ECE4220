@@ -34,16 +34,14 @@ MODULE_LICENSE("GPL");
 // Function address defintions
 #define GPIO_BASE 0x3F200000 // GPSEL0 is at base address
 #define BLOCK_SIZE 4096
-#define GPSET0 0x1c
-#define GPCLR0 0x28
+#define GPSET0_OFFSET 0x1c
+#define GPCLR0_OFFSET 0x28
+#define LED 3
 #define HIGH 1
 #define LOW 0
 
 // Local Variables
-unsigned long * gpsel0 = (unsigned long *)ioremap(0x7e200000 4096);
-unsigned long * gpset0 = (unsigned long *)ioremap(0x7e20001C 4096);
-unsigned long * gpclr0 = (unsigned long *)ioremap(0x7e200028 4096);
-
+iomap = ioremap(GPIO_BASE, BLOCK_SIZE);
 
 
 /* Declare your pointers for mapping the necessary GPIO registers.
@@ -58,12 +56,19 @@ unsigned long * gpclr0 = (unsigned long *)ioremap(0x7e200028 4096);
    one shown in the BCM2835 ARM Peripherals manual.
 */
 
+static void set_pin(void){
+	iowrite32(1 << LED, iomap + GPSET0_OFFSET);
+}
+
+static void unset_pin(void)
+{
+	iowrite32(1 << LED, iomap + GPCLR0_OFFSET);
+}
+
 int init_module()
 {
 	printk("Begin INIT Instructions.\n");
-	unsigned onMask = 0b001000000;
-	GPFSEL0(gpioLED);
-	GPSET0(1);
+	set_pin();
 	printk("Finish INIT Instructions.\n");
 	return 0;
 }
@@ -71,7 +76,6 @@ int init_module()
 void cleanup_module()
 {
 	printk("Begin CLEANUP Instructions.\n");
-	GPFSEL0(gpioLED);
-	GPCLR0(1);
+	unset_pin();
 	printk("Finish CLEANUP Instructions.\n");
 }

@@ -39,7 +39,6 @@ static int led_release(struct inode *inodep, struct file *filep);
 /*
  * Helper functions
  */
-static bool is_gpio_valid(void);
 static void save_gpio_func_select(void);
 static void restore_gpio_func_select(void);
 static void pin_direction_output(void);
@@ -82,49 +81,7 @@ MODULE_PARM_DESC(gpio_num, "The gpio where the LED is connected (default = 6)");
 
 static int __init init_led(void)
 {
-	int ret;
-
-	if (!is_gpio_valid()) {
-		pr_err("%s: Invalid GPIO (%d)\n", MODULE_NAME, gpio_num);
-		ret = -EINVAL;
-		goto out;
-	}
-
-	ret = alloc_chrdev_region(&devt, 0, NUM_DEVICES, MODULE_NAME);
-	if (ret) {
-		pr_err("%s: Failed to allocate char device region.\n",
-			MODULE_NAME);
-		goto out;
-	}
-
-	cdev_init(&led_cdev, &fops);
-	led_cdev.owner = THIS_MODULE;
-	ret = cdev_add(&led_cdev, devt, NUM_DEVICES);
-	if (ret) {
-		pr_err("%s: Failed to add cdev.\n", MODULE_NAME);
-		goto cdev_err;
-	}
-
-	led_class = class_create(THIS_MODULE, "led-test");
-	if (IS_ERR(led_class)) {
-		pr_err("%s: class_create() failed.\n", MODULE_NAME);
-		ret = PTR_ERR(led_class);
-		goto class_err;
-	}
-
-	led_device = device_create(led_class, NULL, devt, NULL, MODULE_NAME);
-	if (IS_ERR(led_device)) {
-		pr_err("%s: device_create() failed.\n", MODULE_NAME);
-		ret = PTR_ERR(led_device);
-		goto dev_err;
-	}
-
 	iomap = ioremap(GPIO_BASE, GPIO_REGION_SIZE);
-	if (!iomap) {
-		pr_err("%s: ioremap() failed.\n", MODULE_NAME);
-		ret = -EINVAL;
-		goto remap_err;
-	}
 
 	func_select_reg_offset = 4 * (gpio_num / 10);
 	func_select_bit_offset = (gpio_num % 10) * 3;
@@ -214,11 +171,6 @@ led_write(struct file *filep, const char __user *buf, size_t len, loff_t *off)
 	return BUF_SIZE;
 }
 
-static bool is_gpio_valid(void)
-{
-	return 0 <= gpio_num && gpio_num < NUM_GPIOS;
-}
-
 static void save_gpio_func_select(void)
 {
 	int val;
@@ -260,7 +212,6 @@ static void unset_pin(void)
 static void read_pin(void)
 {
 	int val;
-
 	val = ioread32(iomap + GPLEV_OFFSET);
 	val = (val >> gpio_num) & 1;
 	pin_value[0] = val ? '1' : '0';
