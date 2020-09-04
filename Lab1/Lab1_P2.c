@@ -40,19 +40,16 @@ MODULE_LICENSE("GPL");
 #define HIGH 1
 #define LOW 0
 
-// Local Variables
-static void __iomem *iomap;
+// Helper functions
+static void set_pin(void);
+static void unset_pin(void);
 
-static void set_pin(void){
-	iowrite32(1 << LED, iomap + GPSET0_OFFSET);
-}
+// Global Variables
+static void __iomem *iomap; // iomap is the base memory address at which we will do our manipulations
+static int gpio_num = LED;
 
-static void unset_pin(void)
-{
-	iowrite32(1 << LED, iomap + GPCLR0_OFFSET);
-}
 
-int init_module()
+int init_led()
 {
 	printk("Begin INIT Instructions.\n");
 	iomap = ioremap(GPIO_BASE, BLOCK_SIZE);
@@ -61,10 +58,22 @@ int init_module()
 	return 0;
 }
 
-void cleanup_module()
+void exit_led()
 {
 	printk("Begin CLEANUP Instructions.\n");
 	unset_pin();
 	iounmap(iomap);
 	printk("Finish CLEANUP Instructions.\n");
 }
+
+static void set_pin(void){
+	iowrite32(1 << gpio_num, iomap + GPSET0_OFFSET);
+}
+
+static void unset_pin(void)
+{
+	iowrite32(1 << gpio_num, iomap + GPCLR0_OFFSET);
+}
+
+module_init(init_led);
+module_exit(exit_led);
