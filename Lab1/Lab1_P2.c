@@ -41,20 +41,7 @@ MODULE_LICENSE("GPL");
 #define LOW 0
 
 // Local Variables
-iomap = ioremap(GPIO_BASE, BLOCK_SIZE);
-
-
-/* Declare your pointers for mapping the necessary GPIO registers.
-   You need to map:
-   
-   - Pin Event detect status register(s)
-   - Rising Edge detect register(s) (either synchronous or asynchronous should work)
-   - Function selection register(s)
-   - Pin Pull-up/pull-down configuration registers
-   
-   Important: remember that the GPIO base register address is 0x3F200000, not the
-   one shown in the BCM2835 ARM Peripherals manual.
-*/
+static void __iomem *iomap;
 
 static void set_pin(void){
 	iowrite32(1 << LED, iomap + GPSET0_OFFSET);
@@ -68,6 +55,7 @@ static void unset_pin(void)
 int init_module()
 {
 	printk("Begin INIT Instructions.\n");
+	iomap = ioremap(GPIO_BASE, BLOCK_SIZE);
 	set_pin();
 	printk("Finish INIT Instructions.\n");
 	return 0;
@@ -77,5 +65,6 @@ void cleanup_module()
 {
 	printk("Begin CLEANUP Instructions.\n");
 	unset_pin();
+	iounmap(iomap);
 	printk("Finish CLEANUP Instructions.\n");
 }
