@@ -31,8 +31,20 @@
 
 MODULE_LICENSE("GPL");
 
+// Function address defintions
+#define GPIO_BASE 0x3F200000 // GPSEL0 is at base address
+#define BLOCK_SIZE 4096
+#define GPSET0 0x1c
+#define GPCLR0 0x28
+#define HIGH 1
+#define LOW 0
+
 // Local Variables
-static unsigned int gpioLED = 64;
+unsigned long * gpsel0 = (unsigned long *)ioremap(0x7e200000 4096);
+unsigned long * gpset0 = (unsigned long *)ioremap(0x7e20001C 4096);
+unsigned long * gpclr0 = (unsigned long *)ioremap(0x7e200028 4096);
+
+
 
 /* Declare your pointers for mapping the necessary GPIO registers.
    You need to map:
@@ -49,6 +61,7 @@ static unsigned int gpioLED = 64;
 int init_module()
 {
 	printk("Begin INIT Instructions.\n");
+	unsigned onMask = 0b001000000;
 	GPFSEL0(gpioLED);
 	GPSET0(1);
 	printk("Finish INIT Instructions.\n");
@@ -59,6 +72,6 @@ void cleanup_module()
 {
 	printk("Begin CLEANUP Instructions.\n");
 	GPFSEL0(gpioLED);
-	GPCLEAR0(1);
+	GPCLR0(1);
 	printk("Finish CLEANUP Instructions.\n");
 }
