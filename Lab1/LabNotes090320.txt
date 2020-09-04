@@ -90,3 +90,9 @@ Pins???
 There will be 32 bits
 8 7 6   5 4 3   2 1 0
 --3--   --2--   --1-- Pin inputs - OX40 -> ob00100000 means pin 2 is an output
+
+LAB SCRATCHWORK:
+32 bit
+want the third pin to be in output mode for the red LED
+meaning ob----001000000
+64
