@@ -41,6 +41,8 @@ MODULE_LICENSE("GPL");
 #define LOW 0
 
 // Helper functions
+int init_led(void);
+void exit_led(void);
 static void set_pin(void);
 static void unset_pin(void);
 
