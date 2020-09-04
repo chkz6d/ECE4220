@@ -178,7 +178,7 @@ static int led_release(struct inode *inodep, struct file *filep)
 static ssize_t
 led_read(struct file *filep, char __user *buf, size_t len, loff_t *off)
 {
-	int err;
+	//int err;
 
 	if (!access_ok(VERIFY_WRITE, buf, len)) {
 		pr_err("%s: Cannot access user buffer for writing\n",
@@ -189,9 +189,9 @@ led_read(struct file *filep, char __user *buf, size_t len, loff_t *off)
 	read_pin();
 	pr_info("%s: led_read = %s\n", MODULE_NAME, pin_value);
 
-	err = copy_to_user(buf, pin_value, BUF_SIZE);
-	if (err)
-		return -EFAULT;
+	//err = copy_to_user(buf, pin_value, BUF_SIZE);
+	// if (err)
+	// 	return -EFAULT;
 
 	return 0;
 }
@@ -200,9 +200,9 @@ static ssize_t
 led_write(struct file *filep, const char __user *buf, size_t len, loff_t *off)
 {
 	char kbuf[BUF_SIZE];
-	int err;
+	//int err;
 
-	err = copy_from_user(kbuf, buf, BUF_SIZE);
+	//err = copy_from_user(kbuf, buf, BUF_SIZE);
 	kbuf[1] = '\0';
 
 	if (strcmp(kbuf, "0") == 0) {
