@@ -8,7 +8,7 @@
 
 int init_module()
 {
-	printk("Hello World.\n")
+	printk("Hello World.\n");
 	return 0;
 }
 
