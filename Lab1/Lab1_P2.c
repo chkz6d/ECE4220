@@ -57,6 +57,7 @@ int init_led()
 	// Local function variables
 	unsigned long *gpsel0 = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
 	unsigned long *gpset0 = gpset0 + GPSET0_OFFSET;
+	unsigned long *gpclr0 = gpset0 + GPCLR0_OFFSET;
 
 	printk("Begin INIT Instructions.\n");
 	iowrite32(1 << gpio_num, gpsel0); // GPSEL pin 3 to output mode
@@ -69,6 +70,8 @@ int init_led()
 void exit_led()
 {
 	// Local function variables
+	unsigned long *gpsel0 = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
+	unsigned long *gpset0 = gpset0 + GPSET0_OFFSET;
 	unsigned long *gpclr0 = gpset0 + GPCLR0_OFFSET;
 
 	printk("Begin CLEANUP Instructions.\n");
