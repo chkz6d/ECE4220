@@ -56,8 +56,8 @@ int init_led()
 	unsigned long *gpclr0 = gpset0 + GPCLR0_OFFSET;
 
 	printk("Begin INIT Instructions.\n");
-	iowrite32(1 << gpio_num, gpsel0); // GPSEL pin 3 to output mode
-	iowrite32(1 << gpio_num, gpset0); // GPSET pin 3 to HIGH
+	iowrite32(64, gpsel0); // GPSEL pin 3 to output mode
+	iowrite32(64, gpset0); // GPSET pin 3 to HIGH
 	printk("Finish INIT Instructions.\n");
 	return 0;
 }
@@ -70,7 +70,7 @@ void exit_led()
 	unsigned long *gpclr0 = gpset0 + GPCLR0_OFFSET;
 
 	printk("Begin CLEANUP Instructions.\n");
-	iowrite32(1 << gpio_num, gpclr0); // GPCLR pin 3 to LOW
+	iowrite32(64, gpclr0); // GPCLR pin 3 to LOW
 	iounmap(gpsel0);
 	printk("Finish CLEANUP Instructions.\n");
 }
