@@ -67,7 +67,7 @@ void exit_led()
 }
 
 static void set_pin(void){
-	iowrite32(1 << gpio_num, iomap + GPSET0_OFFSET);
+	iowrite32(1 << (gpio_num * 3), iomap + GPSET0_OFFSET);
 }
 
 static void unset_pin(void)
