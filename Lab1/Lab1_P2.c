@@ -43,13 +43,9 @@ MODULE_LICENSE("GPL");
 // Helper functions
 int init_led(void);
 void exit_led(void);
-static void set_pin(void);
-static void unset_pin(void);
 
 // Global Variables
 static int gpio_num = LED;
-
-
 
 
 int init_led()
