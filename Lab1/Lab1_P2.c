@@ -47,14 +47,17 @@ static void set_pin(void);
 static void unset_pin(void);
 
 // Global Variables
-static void __iomem *iomap; // iomap is the base memory address at which we will do our manipulations
 static int gpio_num = LED;
+unsigned long *gpsel0 = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
+unsigned long *gpset0 = gpset0 + GPSET0_OFFSET;
+unsigned long *gpclr0 = gpset0 + GPCLR0_OFFSET;
 
 
 int init_led()
 {
 	printk("Begin INIT Instructions.\n");
-	iomap = ioremap(GPIO_BASE, BLOCK_SIZE);
+	iowrite32(1 << gpio_num, gpsel0); // GPSEL pin 3 to output mode
+	iowrite32(1 << gpio_num, gpset0); // GPSET pin 3 to On
 	set_pin();
 	printk("Finish INIT Instructions.\n");
 	return 0;
@@ -63,18 +66,9 @@ int init_led()
 void exit_led()
 {
 	printk("Begin CLEANUP Instructions.\n");
-	unset_pin();
-	iounmap(iomap);
+	iowrite32(1 << gpio_num, gpclr0);
+	iounmap(gpsel0);
 	printk("Finish CLEANUP Instructions.\n");
-}
-
-static void set_pin(void){
-	iowrite32(1 << (gpio_num * 3), iomap + GPSET0_OFFSET);
-}
-
-static void unset_pin(void)
-{
-	iowrite32(1 << gpio_num, iomap + GPCLR0_OFFSET);
 }
 
 module_init(init_led);
