@@ -58,7 +58,6 @@ int init_led()
 	printk("Begin INIT Instructions.\n");
 	iowrite32(1 << gpio_num, gpsel0); // GPSEL pin 3 to output mode
 	iowrite32(1 << gpio_num, gpset0); // GPSET pin 3 to HIGH
-	set_pin();
 	printk("Finish INIT Instructions.\n");
 	return 0;
 }
