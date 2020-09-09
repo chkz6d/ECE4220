@@ -1,19 +1,3 @@
-/* ece4220lab1_isr.c
- * ECE4220/7220
- * Author: Luis Alberto Rivera
- 
- Basic steps needed to configure GPIO interrupt and attach a handler.
- Check chapter 6 of the BCM2837 ARM Peripherals manual for details about
- the GPIO registers, how to configure, set, clear, etc.
- 
- Note: this code is not functional. It shows some of the actual code that you need,
- but some parts are only descriptions, hints or recommendations to help you
- implement your module.
- 
- You can compile your module using the same Makefile provided. Just add
- obj-m += YourModuleName.o
- */
-
 #ifndef MODULE
 #define MODULE
 #endif
@@ -37,8 +21,7 @@ MODULE_LICENSE("GPL");
 #define GPSET0_OFFSET 0x1c
 #define GPCLR0_OFFSET 0x28
 #define LED 3
-#define HIGH 1
-#define LOW 0
+#define CLR_LED 6
 
 // Helper functions
 int init_led(void);
@@ -66,7 +49,7 @@ void exit_led()
 	unsigned long *gpclr0 = gpsel0 + GPCLR0_OFFSET;
 
 	printk("Begin CLEANUP Instructions.\n");
-	iowrite32(1 << LED, gpsel0); // GPSEL pin 3 to output mode
+	iowrite32(1 << CLR_LED, gpsel0); // GPSEL pin 3 to output mode
 	iowrite32(1 << LED, gpclr0); // GPCLR pin 3 to LOW
 	iounmap(gpsel0);
 	printk("Finish CLEANUP Instructions.\n");
