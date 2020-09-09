@@ -44,10 +44,6 @@ MODULE_LICENSE("GPL");
 int init_led(void);
 void exit_led(void);
 
-// Global Variables
-static int gpio_num = LED;
-
-
 int init_led()
 {
 	// Local function variables
@@ -70,6 +66,7 @@ void exit_led()
 	unsigned long *gpclr0 = gpsel0 + GPCLR0_OFFSET;
 
 	printk("Begin CLEANUP Instructions.\n");
+	iowrite32(1 << LED, gpsel0); // GPSEL pin 3 to output mode
 	iowrite32(1 << LED, gpclr0); // GPCLR pin 3 to LOW
 	iounmap(gpsel0);
 	printk("Finish CLEANUP Instructions.\n");
