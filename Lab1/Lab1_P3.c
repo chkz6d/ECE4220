@@ -15,17 +15,17 @@
 
 MODULE_LICENSE("GPL");
 
-// Necessary static defines
+// Necessary static defines (Note need to divide all IO addresses by 4 to get into bytes)
 #define GPIO_BASE 0x3F200000 // GPSEL0 is at base address
 #define BLOCK_SIZE 4096
-#define GPSEL1_OFFSET 0x04
-#define GPSEL2_OFFSET 0x08
-#define GPSET0_OFFSET 0x1c
-#define GPCLR0_OFFSET 0x28
-#define GPAREN0_OFFSET 0x7C
-#define GPEDS0_OFFSET 0x40
-#define GPPUD_OFFSET 0x94
-#define GPPUDCLK0_OFFSET 0x98
+#define GPSEL1_OFFSET 0x01
+#define GPSEL2_OFFSET 0x02
+#define GPSET0_OFFSET 0x07
+#define GPCLR0_OFFSET 0x0A
+#define GPAREN0_OFFSET 0x1F
+#define GPEDS0_OFFSET 0x10
+#define GPPUD_OFFSET 0x25
+#define GPPUDCLK0_OFFSET 0x26
 #define LED 3
 #define CLR_LED 6
 
