@@ -91,8 +91,87 @@ There will be 32 bits
 8 7 6   5 4 3   2 1 0
 --3--   --2--   --1-- Pin inputs - OX40 -> ob00100000 means pin 2 is an output
 
-LAB SCRATCHWORK:
-32 bit
-want the third pin to be in output mode for the red LED
-meaning ob----001000000
-64
+Lab1_P3.c Notes:
+
+Will use these instructions for this part of the lab -
+1) GPCLR0
+2) GPSET0
+3) GPFSEL0 - KNOW
+4) GPAREN0 - Rising edge detect
+5) GPEDS0 - GPEDS0 means event not detected on GPIO pin 0... NOT COVERED IN THIS LAB
+6) GPPUD - GPIO Pin Pull-up/down enable
+7) GPPUDCLK0 - GPIO Pin Pull-up/down Enable Clock 0
+
+Steps:
+1. Get address to push button and set it to input (BCMS 16-20)
+    gpsel, gpset
+2. Configure to trigger interupt
+    {
+        GPPUD // Require pull down (makes all noise 0)
+            //can configure 0 & 1... 2-31 not used
+            PUD - GPIO Pin Pull-up/down
+            00 = Off – disable pull-up/down
+            01 = Enable Pull Down control
+            10 = Enable Pull Up control
+            11 = Reserved
+            *Use in conjunction with GPPUDCLK0/1/2
+        GPPUDCLK //can configure 0... 1-31 not used
+            0 = No Effect
+            1 = Assert Clock on line (n)
+            *Must be used in conjunction with GPPUD
+    }
+    a) GPPUD : 0b01 (pulldown)
+    b) Udelay(100) ~ 150 cycles
+    c) CPPUDCLK0 -> bits 16-20 0x11111000..etc (16-20)
+    d) Udelay(100) ~ 150 cycles
+    e) GPPUD : 0b00 (disable)
+    f) GPPUDCLK : bit 16-20 0x000000...etc
+3. ISR (bind the ISR to interupt) (not a function 79)
+
+    PsuedoCode:
+
+    While loop would be a poor use of processing power
+    while(){
+        pin 1 - Read from GPSET0
+    }
+
+    interrupts would be much better (Highest priority)
+        - Used for small chunks of work
+
+        ISR INSTRUCTION:
+        
+        request_irq(79) // Take parameters (line number - 79) bind to service routine
+            
+        free_irq(79) // Take parameters (line number - 79) free from service routine
+
+        // When OS calls the function it will keep calling until
+        // interupt is clear. 
+        ISR_MY{
+            // Disable 79
+            /* ACTUAL CODE
+                i) Check button
+                    Detect which button is pressed using GPEDS0 (READ)
+                ii) Do your stuff
+            */
+            // Clear interupt
+                Write into GPEDS0 bit 16-20 11111 Without this would call the same ISR again and again
+            // Re-enable 79 (So the interupt will work next time)
+        }
+
+    ISR CLEANUP INSTRUCTION:
+
+    init_module{
+        request_irq(79);
+    }
+
+    cleanup_module{
+        free_irq(79);
+    }
+4. Enable interupt (79)
+    enable_irq(79);
+Need to be rising edge sensitive (GPARN0) for
+
+BCM BrodcomModule (RPi Manufacturer) -> Board Manual Pin Number
+GPIO WiringPi (Chip Manufacturer) -> Physical Pin numbers
+
+    

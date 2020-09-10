@@ -20,40 +20,38 @@ MODULE_LICENSE("GPL");
 #define BLOCK_SIZE 4096
 #define GPSET0_OFFSET 0x1c
 #define GPCLR0_OFFSET 0x28
-#define LED 3
-#define CLR_LED 6
 
 // Helper functions
-int init_led(void);
-void exit_led(void);
+int start_led(void);
+void end_led(void);
 
-int init_led()
+int start_led()
 {
 	// Local function variables
 	unsigned long *gpsel0 = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
 	unsigned long *gpset0 = gpsel0 + GPSET0_OFFSET;
 	unsigned long *gpclr0 = gpsel0 + GPCLR0_OFFSET;
 
-	printk("Begin INIT Instructions.\n");
-	iowrite32(1 << LED, gpsel0); // GPSEL pin 3 to output mode
-	iowrite32(1 << LED, gpset0); // GPSET pin 3 to HIGH
-	printk("Finish INIT Instructions.\n");
+	printk("%X", gpsel0);
+	printk("%X", gpsel0 + 1);
+	printk("%X", gpset0);
+	printk("%X", gpclr0);
+	iowrite32(1 << 3, gpsel0); // GPSEL pin 3 to output mode
+	iowrite32(1 << 3, gpset0); // GPSET pin 3 to HIGH
 	return 0;
 }
 
-void exit_led()
+void end_led()
 {
 	// Local function variables
 	unsigned long *gpsel0 = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
 	unsigned long *gpset0 = gpsel0 + GPSET0_OFFSET;
 	unsigned long *gpclr0 = gpsel0 + GPCLR0_OFFSET;
 
-	printk("Begin CLEANUP Instructions.\n");
-	iowrite32(1 << CLR_LED, gpsel0); // GPSEL pin 3 to output mode
-	iowrite32(1 << LED, gpclr0); // GPCLR pin 3 to LOW
+	iowrite32(1 << 6, gpsel0); // GPSEL pin 3 to output mode
+	iowrite32(1 << 3, gpclr0); // GPCLR pin 3 to LOW
 	iounmap(gpsel0);
-	printk("Finish CLEANUP Instructions.\n");
 }
 
-module_init(init_led);
-module_exit(exit_led);
+module_init(start_led);
+module_exit(end_led);
