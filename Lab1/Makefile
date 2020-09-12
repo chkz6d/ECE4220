@@ -1,4 +1,4 @@
-obj-m+=Lab1_P2.o
+obj-m+=Lab1_P3.o
 ccflags-y := -std=gnu99 -Wno-declaration-after-statement
 
 all:

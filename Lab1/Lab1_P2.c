@@ -18,8 +18,8 @@ MODULE_LICENSE("GPL");
 // Function address defintions
 #define GPIO_BASE 0x3F200000 // GPSEL0 is at base address
 #define BLOCK_SIZE 4096
-#define GPSET0_OFFSET 0x1c
-#define GPCLR0_OFFSET 0x28
+#define GPSET0_OFFSET 0x07
+#define GPCLR0_OFFSET 0x0A
 
 // Helper functions
 int start_led(void);

@@ -1,0 +1,1 @@
+cmd_/home/pi/ECE4220/Lab1/Lab1_P3.ko := ld -EL -r  -T ./scripts/module-common.lds --build-id  -o /home/pi/ECE4220/Lab1/Lab1_P3.ko /home/pi/ECE4220/Lab1/Lab1_P3.o /home/pi/ECE4220/Lab1/Lab1_P3.mod.o ;  true
