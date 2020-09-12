@@ -37,29 +37,21 @@ void exit_led(void);
 int mydev_id; // variable needed to idenitify the handler
 
 static irqreturn_t button_isr(int irq, void *dev_id){
-    disable_irq(79); // Disable 79
+    disable_irq_nosync(79); // Disable 79
 
-    // Instructions/Configuration for Red LED
+    // Instructions/Configuration for Red LED and Button reads
 	unsigned long *gpsel0       = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
 	unsigned long *gpset0       = gpsel0 + GPSET0_OFFSET;
 	unsigned long *gpclr0       = gpsel0 + GPCLR0_OFFSET;
-
-    // Instructions/Configuration for Buttons
-    // Can select pins 10-19 with this
-    unsigned long *gpsel1       = gpsel0 + GPSEL1_OFFSET;
-    unsigned long *gpsel2       = gpsel0 + GPSEL2_OFFSET;
-    unsigned long *gppud        = gpsel0 + GPPUD_OFFSET;
-    unsigned long *gppudclk0    = gpsel0 + GPPUDCLK0_OFFSET;
     unsigned long *gpeds0       = gpsel0 + GPEDS0_OFFSET;
     
-    printk("Interrupt handled\n");
-
-    iowrite32(1 << 3, gpsel0); // GPSEL pin 2 to output mode
     if ( (*gpeds0 + 16) == 1 || (*gpeds0 + 17) == 1 || (*gpeds0 + 18) == 1 || (*gpeds0 + 19) == 1 || (*gpeds0 + 20) == 1 ){
-        iowrite32(1 << 3, gpset0); // GPSEL pin 2 to output mode
+        iowrite32(1 << 3, gpsel0); // GPSEL pin 2 to output mode
+        iowrite32(1 << 3, gpset0);
     }
     else{
-        iowrite32(1 << 3, gpclr0); // GPCLR pin 2 to LOW
+        iowrite32(1 << 6, gpsel0); // GPSEL pin 2 to output mode
+	    iowrite32(1 << 3, gpclr0); // GPCLR pin 2 to LOW
     }
 
     printk("Interrupt handled\n");
@@ -71,22 +63,17 @@ int init_led()
 {
     int dummy = 0;
 
-	// Instructions/Configuration for Red LED
-	unsigned long *gpsel0       = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
-	unsigned long *gpset0       = gpsel0 + GPSET0_OFFSET;
-	unsigned long *gpclr0       = gpsel0 + GPCLR0_OFFSET;
-
     // Instructions/Configuration for Buttons
     // Can select pins 10-19 with this
+    unsigned long *gpsel0       = (unsigned long*)ioremap(GPIO_BASE, BLOCK_SIZE);
     unsigned long *gpsel1       = gpsel0 + GPSEL1_OFFSET;
     unsigned long *gpsel2       = gpsel0 + GPSEL2_OFFSET;
     unsigned long *gppud        = gpsel0 + GPPUD_OFFSET;
     unsigned long *gppudclk0    = gpsel0 + GPPUDCLK0_OFFSET;
-    unsigned long *gpeds0       = gpsel0 + GPEDS0_OFFSET;
+    unsigned long *gparen0      = gpsel0 + GPAREN0_OFFSET;
 
 	printk("Begin INIT Instructions.\n");
 	
-
     // 4 for gpsel1 (buttons 1-4 BCM 16-19)
     iowrite32(0 << 18, gpsel1); // GPSEL pin 16 to input mode
     iowrite32(0 << 21, gpsel1); // GPSEL pin 17 to input mode
@@ -101,17 +88,11 @@ int init_led()
     udelay(100);
     iowrite32(0b11111000000000000000, gppudclk0);
     udelay(100);
-    //iowrite32(0b00, gppud); // unsure if I need this
-    //udelay(100); // unsure if I need this
-    //iowrite32(0b00000000000000000000, gppudclk0); // unsure if I need this
+    iowrite32(0, gppud);
+    iowrite32(0, gppudclk0);
 
+    enable_irq(79);
     dummy = request_irq(79, button_isr, IRQF_SHARED, "Button_handler", &mydev_id);
-    
-    udelay(100);
-
-    // for LED
-    iowrite32(1 << 3, gpsel0); // GPSEL pin 3 to output mode
-	iowrite32(1 << 3, gpset0); // GPSET pin 3 to HIGH
 
 	printk("Finish INIT Instructions.\n");
 	return 0;
