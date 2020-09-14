@@ -114,10 +114,7 @@ Steps:
             01 = Enable Pull Down control
             10 = Enable Pull Up control
             11 = Reserved
-            *Use in conjunction with GPPUDCLK0/1/2
-        GPPUDCLK //can configure 0... 1-31 not used
-            0 = No Effect
-            1 = Assert Clock on line (n)
+            *Use in conjunction witARENe (n)
             *Must be used in conjunction with GPPUD
     }
     a) GPPUD : 0b01 (pulldown)
@@ -128,7 +125,7 @@ Steps:
     f) GPPUDCLK : bit 16-20 0x000000...etc
 3. ISR (bind the ISR to interupt) (not a function 79)
 
-    PsuedoCode:
+    PsuedoCode:sshfs pi@piserver:/home/pi remote #mount
 
     While loop would be a poor use of processing power
     while(){
@@ -140,10 +137,7 @@ Steps:
 
         ISR INSTRUCTION:
         
-        request_irq(79) // Take parameters (line number - 79) bind to service routine
-            
-        free_irq(79) // Take parameters (line number - 79) free from service routine
-
+        requiowrite32(0b01, gppud);
         // When OS calls the function it will keep calling until
         // interupt is clear. 
         ISR_MY{
@@ -174,4 +168,8 @@ Need to be rising edge sensitive (GPARN0) for
 BCM BrodcomModule (RPi Manufacturer) -> Board Manual Pin Number
 GPIO WiringPi (Chip Manufacturer) -> Physical Pin numbers
 
-    
+Notes about connor's functioning lab:
+- 
+
+TO MOUNT
+sshfs pi@128.206.19.XX: rpifs
